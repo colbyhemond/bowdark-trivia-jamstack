@@ -1,7 +1,6 @@
 import '../styles/globals.css'
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/router';
-import Starter from '../components/Starter';
 
 //  List pages you want to be publicly accessible, or leave empty if
 //  every page requires authentication. Use this naming strategy:
