@@ -19,31 +19,23 @@ function MyApp({ Component, pageProps }) {
   const isPublicPage = publicPages.includes(pathname);
 
 
-  // Start of content that can be removed
-  return(
-    <>
-      <Starter/>
-    </>
-  )
-  // End of content that can be removed
-
   // If the current route is listed as public, render it directly
   // Otherwise, use Clerk to require authentication
-  return (
-    <ClerkProvider>
-      {isPublicPage ? (
-        <Component {...pageProps} />
-      ) : (
-        <>
-          <SignedIn>
-            <Component {...pageProps} />
-          </SignedIn>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-        </>
-      )}
-    </ClerkProvider>
+  return (<Component {...pageProps}/>
+    // <ClerkProvider {...pageProps}>
+    //   {isPublicPage ? (
+    //     <Component {...pageProps} />
+    //   ) : (
+    //     <>
+    //       <SignedIn>
+    //         <Component {...pageProps} />
+    //       </SignedIn>
+    //       <SignedOut>
+    //         <RedirectToSignIn />
+    //       </SignedOut>
+    //     </>
+    //   )}
+    // </ClerkProvider>
   );
 }
 

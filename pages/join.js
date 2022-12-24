@@ -4,23 +4,9 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Layout from '../components/Layout'
 
-export default function Home() {
+export default function Join() {
   const router = useRouter()
   const [joinCode, setJoinCode] = useState('')
-
-  //animation start
-  const [counter, setCounter] = useState(0)
-  const [bulbs, setBulbs] = useState([])
-
-  //animation end
-
-  const handleCreateGame = () => {
-    router.push('/create')
-  }
-  
-  const handleStartGame = () => {
-    router.push('/game')
-  }
 
   const handleJoinGame = () => {
 
@@ -38,20 +24,13 @@ export default function Home() {
     setJoinCode(event.target.value)
   }
 
-
-
   return (
     <>
-      <Layout>   
-        <h2>Hosting a game?</h2>
-        <div className='flex gap-5'>
-          <button className='btn' onClick={handleCreateGame}>Create/Edit Game</button>
-          <button className='btn btn-primary' onClick={handleStartGame}>Start Game</button>
-        </div>
-        <h2>Here to play?</h2>
+      <Layout>
+        <h2>Enter code to join game room</h2>
         <div className='flex gap-1'>
           <input className='input input-bordered' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
-          <button className='btn btn-primary' onClick={handleJoinGame}>Join Game</button>
+          <button className='btn' onClick={handleJoinGame}>Join Game</button>
         </div>
       </Layout>
     </>

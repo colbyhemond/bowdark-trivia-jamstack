@@ -1,10 +1,10 @@
 import clientPromise from "../../lib/utils/mongodb.js";
 import {ObjectId} from 'mongodb'
-import { withAuth } from "@clerk/nextjs/api";
+// import { withAuth } from "@clerk/nextjs/api";
 
-export default withAuth(async function handler(req, res) {
+export default async function handler(req, res) {
   //Authorization
-  const { userId, sessionId, getToken } = req.auth;
+  // const { userId, sessionId, getToken } = req.auth;
 
   //General
   console.log('ℹ️ Request Received');
@@ -77,4 +77,4 @@ export default withAuth(async function handler(req, res) {
       }
     break
   }
-})
+}
