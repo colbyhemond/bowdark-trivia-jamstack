@@ -76,10 +76,6 @@ export default function Create() {
       currentQuestion = e.target.value
   }
 
-  const handleIdInputChange = (e) => {
-    gameId = e.target.value
-  }
-
   const handleLoadSavedGame = () => {
     router.push('/load')
   }

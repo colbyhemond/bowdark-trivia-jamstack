@@ -112,12 +112,9 @@ export default function Game() {
             <h2>To join go to <code className='bg-gray-700'>{window.location.origin}/join</code></h2>
             <h2>Use code <code className='bg-gray-700 tracking-[.5em]'>{gameId}</code></h2>
             {/* <button className='btn' onClick={handleBeginGame}>Begin!</button> */}
-            
-            <Link href={`/host?game=${gameId}`} passHref>
-              <a target="_blank" rel="noopener noreferrer">
+              <a target="_blank" rel="noopener noreferrer" href={`${window.location.origin}/host?game=${gameId}`}>
                 Open Host View
               </a>
-            </Link>
             <h2>People in the house:</h2>
             {people.length > 0 ? (
               people.map((person) => {
