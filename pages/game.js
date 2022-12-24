@@ -54,7 +54,6 @@ export default function Game() {
   const setPeopleInfo = () => {
     channel.presence.get((err, members) => {
       setPeopleCount(members.length)
-      console.log(members);
       setPeople(members)
     })
   }

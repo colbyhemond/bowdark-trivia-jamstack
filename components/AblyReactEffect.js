@@ -10,7 +10,7 @@ export function useChannel(channelName, callbackOnMessage) {
     // } else {
 
         console.log("Getting Ably Realtime Connection from AblyReactEffect")
-        let ably = new Ably.Realtime.Promise({ authUrl: 'http://localhost:3000/api/createTokenRequest' });
+        let ably = new Ably.Realtime.Promise({ authUrl: 'https://astonishing-gecko-78d860.netlify.app/api/createTokenRequest' });
 
         const channel = ably.channels.get(channelName);
 
