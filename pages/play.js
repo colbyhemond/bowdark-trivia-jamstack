@@ -81,7 +81,7 @@ export default function Play() {
         </label>
         <div className='flex mt-5'>
           <div className='border rounded-[50%] border-neutral border-[7px] w-[100px] h-[100px] flex justify-center items-center bg-primary' onClick={handleLightBulbClick}>
-            <img width="50px" height="50px" src="./bowdark_logo.svg" />
+            <Image width={50} height={50} src="./bowdark_logo.svg" alt="Bowdark Logo" />
           </div>
         </div>
       </Layout>
