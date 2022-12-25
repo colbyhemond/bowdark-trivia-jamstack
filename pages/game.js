@@ -1,14 +1,12 @@
-import Head from 'next/head'
 import Script from 'next/script'
-import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { useChannel } from "../components/AblyReactEffect";
+// import { useChannel } from "../components/AblyReactEffect";
 import PlayersWidget from '../components/PlayersWidget'
 import SVGCanvas from '../components/SVGCanvas'
-// OMWCX
+import { configureAbly } from '@ably-labs/react-hooks'
+
 export default function Game() {
   const router = useRouter()
 
@@ -18,16 +16,61 @@ export default function Game() {
   const [peopleCount, setPeopleCount] = useState(undefined)
   const [gameId, setGameId] = useState('')
   const [people, setPeople] = useState([])
+  const [channel, setChannel] = useState(null)
   let _gameId
   
+  const setPeopleInfo = (channel) => {
+    channel.presence.get((err, members) => {
+      console.log(members);
+      setPeopleCount(members.length)
+      setPeople(members)
+    })
+  }
+
+  useEffect(() => {
+    const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+
+    ably.connection.on((stateChange) => {
+      console.log(stateChange)
+    })
+
+    const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
+    // _channel.subscribe((message) => {
+    //     setLogs(prev => [...prev, new LogEntry(`✉️ event name: ${message.name} text: ${message.data.text}`)])
+    // })
+
+    _channel.presence.subscribe('update', function(member) {
+      setPeopleInfo(_channel)
+    });
+  
+    _channel.presence.subscribe('enter', (event) => {
+      setPeopleInfo(_channel)
+    });
+  
+    _channel.presence.subscribe('leave', (event) => {
+      setPeopleInfo(_channel)
+    });
+  
+    _channel.subscribe('next-question', (question) => { //@TODO need to make sure that this is being published from /host.js
+      setQuestion(question)
+    })
+
+    if (peopleCount === undefined && _channel) {
+      setPeopleInfo(_channel)
+    }
+
+    setChannel(_channel)
+
+    return () => {
+      _channel.unsubscribe()
+    }
+  }, []) // Only run the client
+
+  //maybe subscribe to event to start the game
 
   if (router.isReady && !gameId) {
     const { game } = router.query
     game ? setGameId(game) : null
-  }
-
-  const handleBeginGame = () => {
-    setGameStarted(true)
   }
 
   const handleChangeGameId = (event) => {
@@ -41,43 +84,22 @@ export default function Game() {
 
     router.push({
         pathname: '/game',
-        query: { game: _gameId }
+        query: { 
+          game: _gameId,
+          host: true
+        }
       }, 
       undefined, { shallow: true }
       )
   }
+ 
+  
 
-  const [channel, ably] = useChannel("bowdark-trivia", (answer) => {
-    setAnswers([...answers, answer])
-  });
-
-  const setPeopleInfo = () => {
-    channel.presence.get((err, members) => {
-      setPeopleCount(members.length)
-      setPeople(members)
-    })
+  const returnHostButton = () => {
+    return (<>
+          <button className='btn btn-primary' onClick={()=>{window.open(`${window.location.origin}/host?game=${gameId}`, '_ blank', 'rel="noopener,rel="noreferrer"')}}>Open Host View</button>
+    </>)
   }
-
-  if (peopleCount === undefined) {
-    setPeopleInfo()
-  }
-
-  channel.presence.subscribe('update', function(member) {
-    setPeopleInfo()
-  });
-
-  channel.presence.subscribe('enter', (event) => {
-    setPeopleInfo()
-  });
-
-  channel.presence.subscribe('leave', (event) => {
-    setPeopleInfo()
-  });
-
-  // subscribe to getting the next question to display - setQuestion
-  channel.subscribe('next-question', () => {
-    setQuestion()
-  })
 
   // subscribe to users in game - display list of users (maybe points)
 
@@ -101,7 +123,9 @@ export default function Game() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>
-        <SVGCanvas channel={channel}/>
+      { router.isReady && router.query && router.query.host ? returnHostButton() : null}
+        
+        {channel ? <SVGCanvas channel={channel}/> : null}
         {gameStarted ? <>
             <h1>{question}</h1>
             <p>Answers Submitted: {answers.length}</p>
@@ -115,6 +139,7 @@ export default function Game() {
               <a target="_blank" rel="noopener noreferrer" href={`${window.location.origin}/host?game=${gameId}`}>
                 Open Host View
               </a>
+              { /*Need to move this to a side pane on the right */}
             <h2>People in the house:</h2>
             {people.length > 0 ? (
               people.map((person) => {

@@ -6,6 +6,8 @@ const SVGCanvas = ({channel}) => {
     const [counter, setCounter] = useState(0)
     const [lights, setLights] = useState([])
 
+    console.log('Icons are active');
+
     //subscribe to an event to trigger this
     const handleAnimate = () => {
         

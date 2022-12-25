@@ -68,7 +68,10 @@ export default function Create() {
   const handleStartGame = () => {
       router.push({
         pathname: '/game',
-        query: { game: gameId }
+        query: { 
+          game: gameId,
+          host: true
+        }
       })
   }
 

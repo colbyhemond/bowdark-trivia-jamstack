@@ -1,6 +1,8 @@
 
 
 const PlayersWidget = ({playersCount}) => {
+
+    playersCount = playersCount === undefined ? 0 : playersCount
     
     return (<>
         <div className="stats shadow bg-zinc-900 text-primary">
