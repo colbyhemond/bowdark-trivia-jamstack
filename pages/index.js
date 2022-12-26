@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Layout from '../components/Layout'
+import LoginButton from '../components/LoginButton'
 
 export default function Home() {
   const router = useRouter()
@@ -19,7 +20,7 @@ export default function Home() {
   }
   
   const handleStartGame = () => {
-    router.push('/host')
+    router.push('/game')
   }
 
   const handleJoinGame = () => {
@@ -43,6 +44,7 @@ export default function Home() {
   return (
     <>
       <Layout>   
+        <LoginButton/>
         <h2>Hosting a game?</h2>
         <div className='flex gap-5'>
           <button className='btn' onClick={handleCreateGame}>Create/Edit Game</button>

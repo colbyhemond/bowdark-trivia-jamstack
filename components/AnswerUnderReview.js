@@ -11,6 +11,8 @@ const AnswerUnderReview = ({answer, key, onAccept, onReject}) => {
         onReject(key)
     }
 
+    console.log(key);
+
     return (<>
         <div className="flex items-center gap-5 mt-10"  key={key}>
             <button className="btn btn-error" onClick={handleReject}>Wrong</button>

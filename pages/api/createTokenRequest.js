@@ -26,12 +26,15 @@
 
 import * as dotenv from "dotenv";
 import * as Ably from "ably/promises";
+import { getToken } from "next-auth/jwt"
+
+const secret = process.env.NEXTAUTH_SECRET
 
 dotenv.config();
 
 export default async function handler(req, res) {
 
-  console.log('/api/authentication/token-auth called')
+  console.log('/api/createTokenRequest called')
 
   if (!process.env.ABLY_API_KEY) {
     return res
@@ -44,6 +47,9 @@ export default async function handler(req, res) {
                 Please see README.md for more details on configuring your Ably API Key.`,
             })
     }
+
+  const token = await getToken({ req, secret })
+  console.log("JSON Web Token", token)
 
   const clientId = req.body["clientId"] || process.env.DEFAULT_CLIENT_ID || "NO_CLIENT_ID";
   const client = new Ably.Rest(process.env.ABLY_API_KEY);

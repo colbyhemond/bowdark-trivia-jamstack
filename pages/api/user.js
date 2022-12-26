@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         console.log('POST Request Received');
 
         let bodyObject = req.body ? JSON.parse(req.body) : null;
-        const insertQuestionResponse = await db.collection("games").insertOne(bodyObject)
+        const insertUserResponse = await db.collection("users").insertOne(bodyObject)
         
         res.status(201).json('')
         return
@@ -34,18 +34,21 @@ export default async function handler(req, res) {
       case "GET":
         console.log('GET Request Received');
 
-        const rawQuestions = await db.collection("games").find({ "game": req.query.game }).toArray()
+        const rawUser = await db.collection("users").find({ "localId": req.query.localId }).toArray()
 
-        const cleanQuestions = rawQuestions.map(question => {
-          return question.question
+        const cleanUser = rawUser.map(user => {
+          return {localId: user.localId, name: user.name}
         })
 
-        res.status(200).json(cleanQuestions)
+        res.status(200).json(cleanUser)
         return
       case "PUT":
         console.log('PUT Request Received');
 
-        res.status(201).json(req)
+        let userToUpdate = req.body ? JSON.parse(req.body) : null;
+        const updateUserResponse = await db.collection("users").updateOne({"localId": userToUpdate.localId}, {$set: {"name": userToUpdate.name}})
+        
+        res.status(201).json('')
         return
 
       case 'DELETE':

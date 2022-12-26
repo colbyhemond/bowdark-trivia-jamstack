@@ -4,37 +4,57 @@ import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import Script from 'next/script'
 import { configureAbly } from '@ably-labs/react-hooks'
+import { useSession } from "next-auth/react"
+
+const IDENTIFIER_KEY = '__bt_id'
+const USER = '__bt_user'
+
 
 export default function Play() {
     const router = useRouter()
 
     const [input, setInput] = useState(undefined)
     const [username, setUsername] = useState(undefined)
-    const [isUsername, setIsUsername] = useState(false)
+    const [isUsername, setIsUsername] = useState(true)
     const [gameId, setGameId] = useState('')
     const [channel, setChannel] = useState(null)
 
-    useEffect(() => {
-      const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
-  
-      ably.connection.on((stateChange) => {
-        console.log(stateChange)
-      })
-  
-      const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
+    const {data: session} = useSession()
+    console.log(session);
 
-      if (router.isReady && !gameId) {
+    useEffect(() => {
+
+      if (router.isReady && !gameId && session && window) {
+
         const { game } = router.query
         game ? setGameId(game) : router.push('/join')
-        _channel.presence.enter();
+        
+        if (!username) {
+          console.log('setting username');
+          let _user = JSON.parse(localStorage.getItem(USER))
+          _user ? setUsername(_user.name) : setUsername(session.user.name)
+        }
+
+        const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+    
+        ably.connection.on((stateChange) => {
+          console.log(stateChange)
+        })
+    
+        const _channel = ably.channels.get(`trivia-channel-${game}`)
+
+        _channel.presence.enter({name: session.user.name});
+
+        
+        setChannel(_channel)
+
+        return () => {
+          _channel.unsubscribe()
+        }
+
       }
-      
-      setChannel(_channel)
-  
-      return () => {
-        _channel.unsubscribe()
-      }
-    }, [gameId, router, channel]) // Only run the client
+
+    }, [gameId, router, channel, session, username]) // Only run the client
 
     
   
@@ -55,9 +75,26 @@ export default function Play() {
         }
     }
 
-    const handleSubmitName = () => {
+    const handleSubmitName = async () => {
       setIsUsername(true)
+      session.user.name = username
       channel.presence.update({name: username})
+      setUsername(username)
+      const localId = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
+      const response = await fetch('/api/user', {
+              method: 'PUT',
+              body: JSON.stringify({
+                  localId: localId,
+                  name: username
+              })
+            })
+        
+      if (response.status == '201') {
+        console.log(`User ${localId} was updated`);
+      } else {
+        console.error(`Error updating User ${localId}`);
+      }
+      session ? localStorage.setItem(USER, JSON.stringify(session.user)) : null
     }
 
     const handleChangeName = (event) => {

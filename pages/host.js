@@ -17,34 +17,48 @@ export default function Host() {
   const [isGameStarted, setIsGameStarted] = useState(false)
 
   useEffect(() => {
-    const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+    if (router.isReady) {
 
-    ably.connection.on((stateChange) => {
-      console.log(stateChange)
-    })
+      const { game } = router.query
+      if (!gameId) {
+        game ? setGameId(game) : router.push('/game')
+      }
+      
+      const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
 
-    const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
+      ably.connection.on((stateChange) => {
+        console.log(stateChange)
+      })
 
-    _channel.subscribe('trivia-answer', (answer) => {
-        setAnswers([...answers, answer])
-    })
+      const _channel = ably.channels.get(`trivia-channel-${game}`)
 
-    _channel.presence.subscribe('enter', (event) => {
-      let newCount = peopleCount + 1
-      setPeopleCount(newCount)
-    });
-  
-    _channel.presence.subscribe('leave', (event) => {
-      let newCount = peopleCount - 1
-      setPeopleCount(newCount)
-    });
+      _channel.subscribe('trivia-answer', (answer) => {
+          setAnswers([...answers, answer])
+      })
 
-    setChannel(_channel)
+      _channel.presence.subscribe('enter', (event) => {
+        let newCount = peopleCount + 1
+        setPeopleCount(newCount)
+      });
+    
+      _channel.presence.subscribe('leave', (event) => {
+        let newCount = peopleCount - 1
+        setPeopleCount(newCount)
+      });
 
-    return () => {
-      _channel.unsubscribe()
+      setChannel(_channel)
+
+      return () => {
+        _channel.unsubscribe()
+      }
+    
     }
-  }, [answers, peopleCount, channel]) // Only run the client
+
+    if (!channel) {
+      console.log(router.isReady);
+      // router.replace('/host')
+    }
+  }, [answers, router, gameId]) // Only run the client
 
   const getQuestions = async (gameId) => {
     fetch('/api/game?' + new URLSearchParams({
@@ -77,22 +91,23 @@ export default function Host() {
       setIsGameStarted(true)
     }
     console.log(`current question: ${currentQuestion}`);
+    console.log(questions[currentQuestion]);
     channel.publish({ name: "next-question", data: questions[currentQuestion]});
     setCurrentQuestion(currentQuestion + 1)
     setAnswers([])
   }
 
-  const handleAccept = (key) => {
-    const correctAnswer = answers.splice(key, 1)
+  const handleAccept = () => {
+    const correctAnswer = answers[0]
     channel.publish({ name: "correct-answer", data: correctAnswer });
   }
   
 
   //Change the Reject to update a boolean field whether the answer is correct or not, this way we can retain the indexes and the data
 
-  const handleReject = (key) => {
+  const handleReject = () => {
     const answersClone = [...answers]
-    const wrongAnswer = answersClone.splice(key, 1)
+    const wrongAnswer = answersClone.splice(0, 1)
     setAnswers(answersClone)
   }
 
@@ -111,6 +126,7 @@ export default function Host() {
                               {answers.length > 0 ? (
                                   answers.map((answer, index) => {
                                       // return(<div key={index}>{answer.data}</div>)
+                                      console.log(index);
                                       return (index === 0 ? <AnswerUnderReview answer={answer.data} key={index} onAccept={handleAccept} onReject={handleReject}/> : <div className='opacity-50' key={index}>{answer.data}</div>)
                                   })
                               ) : <p>No answers yet...</p>}

@@ -11,6 +11,7 @@ export default function Game() {
 
   const [question, setQuestion] = useState(undefined)
   const [answers, setAnswers] = useState([])
+  const [correctAnswer, setCorrectAnswer] = useState(undefined)
   const [gameStarted, setGameStarted] = useState(false)
   const [peopleCount, setPeopleCount] = useState(undefined)
   const [gameId, setGameId] = useState('')
@@ -27,54 +28,68 @@ export default function Game() {
   }
 
   useEffect(() => {
-    const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+    console.log(router);
+    if (router.isReady) {
 
-    ably.connection.on((stateChange) => {
-      console.log(stateChange)
-    })
-
-    const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
-
-    _channel.presence.subscribe('update', function(member) {
-      setPeopleInfo(_channel)
-    });
-  
-    _channel.presence.subscribe('enter', (event) => {
-      setPeopleInfo(_channel)
-    });
-  
-    _channel.presence.subscribe('leave', (event) => {
-      setPeopleInfo(_channel)
-    });
-  
-    _channel.subscribe('next-question', (question) => { //@TODO need to make sure that this is being published from /host.js
-      if (!gameStarted) {
-        setGameStarted(true)
+      const { game } = router.query
+      if (!gameId) {
+        game ? setGameId(game) : null
       }
-      setQuestion(question.data)
-    })
 
-    _channel.subscribe('trivia-answer', (answer) => {
-      setAnswers([...answers, answer])
-    })
+      const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
 
-    if (peopleCount === undefined && _channel) {
-      setPeopleInfo(_channel)
+      ably.connection.on((stateChange) => {
+        console.log(stateChange)
+      })
+
+      const _channel = ably.channels.get(`trivia-channel-${game}`)
+
+      _channel.presence.subscribe('update', function(member) {
+        setPeopleInfo(_channel)
+      });
+    
+      _channel.presence.subscribe('enter', (event) => {
+        setPeopleInfo(_channel)
+      });
+    
+      _channel.presence.subscribe('leave', (event) => {
+        setPeopleInfo(_channel)
+      });
+    
+      _channel.subscribe('next-question', (question) => {
+        console.log('next question');
+        if (!gameStarted) {
+          setGameStarted(true)
+        }
+        setCorrectAnswer(undefined)
+        setAnswers([])
+        setQuestion(question.data)
+      })
+
+      _channel.subscribe('trivia-answer', (answer) => {
+        setAnswers([...answers, answer])
+      })
+
+      _channel.subscribe('correct-answer', (answer) => {
+        console.log(answer);
+        console.log(answer.data.data);
+        setCorrectAnswer(answer.data.data)
+      })
+
+      if (peopleCount === undefined && _channel) {
+        setPeopleInfo(_channel)
+      }
+
+      setChannel(_channel)
+
+      return () => {
+        _channel.unsubscribe()
+      }
+
     }
-
-    setChannel(_channel)
-
-    return () => {
-      _channel.unsubscribe()
-    }
-  }, [answers, gameStarted, peopleCount, channel]) // Only run the client
+  }, [answers, gameStarted, peopleCount, channel, gameId, router]) // Only run the client
 
   //maybe subscribe to event to start the game
-
-  if (router.isReady && !gameId) {
-    const { game } = router.query
-    game ? setGameId(game) : null
-  }
 
   const handleChangeGameId = (event) => {
     _gameId = event.target.value
@@ -86,7 +101,7 @@ export default function Game() {
     }
 
     router.push({
-        pathname: '/game',
+        pathname: '/host',
         query: { 
           game: _gameId,
           host: true
@@ -97,6 +112,17 @@ export default function Game() {
   }
 
   // subscribe to users in game - display list of users (maybe points)
+
+  if (correctAnswer) {
+    return (<>
+      <Layout>
+      {channel ? <SVGCanvas channel={channel}/> : null}
+            <h1>{question}</h1>
+            <h2 className='text-primary'>Correct Answer: {correctAnswer}</h2>
+       
+      </Layout>
+    </>)
+  }
 
   if (!gameId) {
     return (<>
