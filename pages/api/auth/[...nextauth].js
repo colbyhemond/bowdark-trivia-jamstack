@@ -28,7 +28,7 @@ export const authOptions = {
  
           // Add logic here to look up the user from the credentials supplied
 
-          const response = await fetch('http://localhost:3000/api/user?' + new URLSearchParams({
+          const response = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/user?` + new URLSearchParams({
             localId: user.localId
           }))
 
@@ -43,7 +43,7 @@ export const authOptions = {
           if (data.length > 0) {
             user = data[0]
           } else {
-            const response = await fetch('http://localhost:3000/api/user', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/user`, {
               method: 'POST',
               body: JSON.stringify({
                   localId: user.localId,
