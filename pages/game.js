@@ -2,7 +2,6 @@ import Script from 'next/script'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-// import { useChannel } from "../components/AblyReactEffect";
 import PlayersWidget from '../components/PlayersWidget'
 import SVGCanvas from '../components/SVGCanvas'
 import { configureAbly } from '@ably-labs/react-hooks'
@@ -71,7 +70,7 @@ export default function Game() {
     return () => {
       _channel.unsubscribe()
     }
-  }, [answers]) // Only run the client
+  }, [answers, gameStarted, peopleCount]) // Only run the client
 
   //maybe subscribe to event to start the game
 

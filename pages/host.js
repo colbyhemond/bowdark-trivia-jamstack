@@ -2,7 +2,6 @@ import Script from 'next/script'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-import { useChannel } from "../components/AblyReactEffect";
 import AnswerUnderReview from '../components/AnswerUnderReview'
 import { configureAbly } from '@ably-labs/react-hooks'
 

@@ -2,9 +2,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
-// import { useChannel } from "../components/AblyReactEffect";
 import Script from 'next/script'
-import * as Ably from 'ably/promises'
 import { configureAbly } from '@ably-labs/react-hooks'
 
 export default function Play() {
@@ -36,7 +34,7 @@ export default function Play() {
       return () => {
         _channel.unsubscribe()
       }
-    }, []) // Only run the client
+    }, [gameId, router]) // Only run the client
 
     
   
