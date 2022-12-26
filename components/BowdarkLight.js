@@ -37,9 +37,7 @@ const BowdarkLight = ({counter, onDisappear}) => {
         }, 1)
 
         return (<>
-            {/* <svg id={`svg-viewbox-${counter}`} viewBox='0 -60 100 100' className='absolute pointer-events-none'> */}
-                <image  id={`lightbulb-${counter}`} x={imageX} y="-50" width="10" height="10" href="/bowdark_logo.svg" />
-            {/* </svg> */}
+            <image  id={`lightbulb-${counter}`} x={imageX} y="-50" width="10" height="10" href="/bowdark_logo.svg" />
         </>)
     } else {
         return null

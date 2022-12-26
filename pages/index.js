@@ -19,7 +19,7 @@ export default function Home() {
   }
   
   const handleStartGame = () => {
-    router.push('/game')
+    router.push('/host')
   }
 
   const handleJoinGame = () => {

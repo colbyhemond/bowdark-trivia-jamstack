@@ -99,14 +99,6 @@ export default function Game() {
       undefined, { shallow: true }
       )
   }
- 
-  
-
-  const returnHostButton = () => {
-    return (<>
-          <button className='btn btn-primary' onClick={()=>{window.open(`${window.location.origin}/host?game=${gameId}`, '_ blank', 'rel="noopener,rel="noreferrer"')}}>Open Host View</button>
-    </>)
-  }
 
   // subscribe to users in game - display list of users (maybe points)
 
@@ -129,9 +121,7 @@ export default function Game() {
         strategy="afterInteractive"
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
-      <Layout>
-      { router.isReady && router.query && router.query.host ? returnHostButton() : null}
-        
+      <Layout>        
         {channel ? <SVGCanvas channel={channel}/> : null}
         {gameStarted ? <>
             <h1>{question}</h1>
@@ -142,11 +132,7 @@ export default function Game() {
             <PlayersWidget playersCount={peopleCount}/>
             <h2>To join go to <code className='bg-gray-700'>{window.location.origin}/join</code></h2>
             <h2>Use code <code className='bg-gray-700 tracking-[.5em]'>{gameId}</code></h2>
-            {/* <button className='btn' onClick={handleBeginGame}>Begin!</button> */}
-              <a target="_blank" rel="noopener noreferrer" href={`${window.location.origin}/host?game=${gameId}`}>
-                Open Host View
-              </a>
-              { /*Need to move this to a side pane on the right */}
+            { /*Need to move this to a side pane on the right */}
             <h2>People in the house:</h2>
             {people.length > 0 ? (
               people.map((person) => {

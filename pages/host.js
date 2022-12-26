@@ -105,7 +105,7 @@ export default function Host() {
       ></Script>
       <Layout>
         <div className='h-[80vh] flex flex-col justify-between'>
-
+          <a target="_blank" rel="noopener noreferrer" href={`${window.location.origin}/game?game=${gameId}`}>Open Game View</a>
           {isGameStarted ?  <>
                             <button className='btn btn-primary my-5' onClick={handleNextQuestion}>Next Question</button>
                             <div className='flex flex-col-reverse items-center'>
