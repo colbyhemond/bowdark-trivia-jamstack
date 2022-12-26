@@ -34,7 +34,7 @@ export default function Play() {
       return () => {
         _channel.unsubscribe()
       }
-    }, [gameId, router]) // Only run the client
+    }, [gameId, router, channel]) // Only run the client
 
     
   

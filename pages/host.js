@@ -44,7 +44,7 @@ export default function Host() {
     return () => {
       _channel.unsubscribe()
     }
-  }, [answers, peopleCount]) // Only run the client
+  }, [answers, peopleCount, channel]) // Only run the client
 
   const getQuestions = async (gameId) => {
     fetch('/api/game?' + new URLSearchParams({

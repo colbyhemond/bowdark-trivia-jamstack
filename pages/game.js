@@ -34,9 +34,6 @@ export default function Game() {
     })
 
     const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
-    // _channel.subscribe((message) => {
-    //     setLogs(prev => [...prev, new LogEntry(`✉️ event name: ${message.name} text: ${message.data.text}`)])
-    // })
 
     _channel.presence.subscribe('update', function(member) {
       setPeopleInfo(_channel)
@@ -70,7 +67,7 @@ export default function Game() {
     return () => {
       _channel.unsubscribe()
     }
-  }, [answers, gameStarted, peopleCount]) // Only run the client
+  }, [answers, gameStarted, peopleCount, channel]) // Only run the client
 
   //maybe subscribe to event to start the game
 
