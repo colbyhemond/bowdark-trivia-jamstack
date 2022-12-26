@@ -16,11 +16,6 @@ export default function Play() {
     const [gameId, setGameId] = useState('')
     const [channel, setChannel] = useState(null)
 
-    // const [channel, ably] = useChannel("bowdark-trivia", (message) => {
-    //   console.log('received answer:');
-    //   console.log(message);
-    // });
-
     useEffect(() => {
       const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
   
@@ -29,11 +24,6 @@ export default function Play() {
       })
   
       const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
-
-      //@TODO: If needed to subscribe to get current question, do that here
-      // _channel.subscribe((message) => {
-      //     setLogs(prev => [...prev, new LogEntry(`✉️ event name: ${message.name} text: ${message.data.text}`)])
-      // })
 
       if (router.isReady && !gameId) {
         const { game } = router.query
@@ -88,7 +78,7 @@ export default function Play() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>
-        { isUsername  ? <h1>Hey, {username}!</h1> 
+        { isUsername  ? <h1>Hey, {username}! <span className='text-sm cursor-pointer' onClick={() => {setIsUsername(false)}}>✏️</span></h1> 
                       : <div className='flex items-center'>
                           <p>What should we call you?</p>
                           <input type='text' className='input input-bordered' placeholder='Your name here' onChange={handleChangeName}/>

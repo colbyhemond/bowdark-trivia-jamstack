@@ -52,7 +52,14 @@ export default function Game() {
     });
   
     _channel.subscribe('next-question', (question) => { //@TODO need to make sure that this is being published from /host.js
-      setQuestion(question)
+      if (!gameStarted) {
+        setGameStarted(true)
+      }
+      setQuestion(question.data)
+    })
+
+    _channel.subscribe('trivia-answer', (answer) => {
+      setAnswers([...answers, answer])
     })
 
     if (peopleCount === undefined && _channel) {
@@ -64,7 +71,7 @@ export default function Game() {
     return () => {
       _channel.unsubscribe()
     }
-  }, []) // Only run the client
+  }, [answers]) // Only run the client
 
   //maybe subscribe to event to start the game
 

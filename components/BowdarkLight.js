@@ -9,11 +9,8 @@ gsap.registerPlugin(CustomEase);
 
 const BowdarkLight = ({counter, onDisappear}) => {
     const [visible, setVisibility] = useState(true)
-    const [imageX, setImageX] = useState(Math.floor(Math.random() * 100))
+    const [imageX, setImageX] = useState(Math.floor(Math.random() * 80))
     const [animationX, setAnimationX] = useState(Math.ceil(Math.random() * 5) * (Math.round(Math.random()) ? 1 : -1))
-
-    console.log('hi there');
-    console.log(counter);
 
     const runAnimation = () => {
         gsap.to(`#lightbulb-${counter}`, { 
@@ -33,7 +30,6 @@ const BowdarkLight = ({counter, onDisappear}) => {
         return null
     }
 
-    console.log('test');
     if (visible) {
 
         setTimeout(() => {

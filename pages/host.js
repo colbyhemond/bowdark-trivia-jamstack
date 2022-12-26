@@ -15,6 +15,7 @@ export default function Host() {
   const [gameId, setGameId] = useState('')
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [channel, setChannel] = useState(null)
+  const [isGameStarted, setIsGameStarted] = useState(false)
 
   useEffect(() => {
     const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
@@ -26,8 +27,7 @@ export default function Host() {
     const _channel = ably.channels.get('bowdark-trivia') //@TODO: change bowdark-trivia to the generated gameId once finialized
 
     _channel.subscribe('trivia-answer', (answer) => {
-        console.log(answers);
-        setAnswers(answers.concat(answer))
+        setAnswers([...answers, answer])
     })
 
     _channel.presence.subscribe('enter', (event) => {
@@ -42,12 +42,10 @@ export default function Host() {
 
     setChannel(_channel)
 
-    console.log(answers);
-
     return () => {
       _channel.unsubscribe()
     }
-  }, []) // Only run the client
+  }, [answers, peopleCount]) // Only run the client
 
   const getQuestions = async (gameId) => {
     fetch('/api/game?' + new URLSearchParams({
@@ -76,25 +74,28 @@ export default function Host() {
   }
   
   const handleNextQuestion = () => {
-    channel.publish({ name: "next-question"});
+    if (!isGameStarted) {
+      setIsGameStarted(true)
+    }
+    console.log(`current question: ${currentQuestion}`);
+    channel.publish({ name: "next-question", data: questions[currentQuestion]});
+    setCurrentQuestion(currentQuestion + 1)
     setAnswers([])
   }
 
-  // const handleAccept = (key) => {
-  //   const correctAnswer = answers.splice(key, 1)
-  //   channel.publish({ name: "correct-answer", data: correctAnswer });
-  // }
+  const handleAccept = (key) => {
+    const correctAnswer = answers.splice(key, 1)
+    channel.publish({ name: "correct-answer", data: correctAnswer });
+  }
   
 
-  // Change the Reject to update a boolean field whether the answer is correct or not, this way we can retain the indexes and the data
+  //Change the Reject to update a boolean field whether the answer is correct or not, this way we can retain the indexes and the data
 
-  // const handleReject = (key) => {
-  //   const answersClone = [...answers]
-  //   const wrongAnswer = answersClone.splice(key, 1)
-  //   setAnswers(answersClone)
-  // }
-
-  console.log(answers);
+  const handleReject = (key) => {
+    const answersClone = [...answers]
+    const wrongAnswer = answersClone.splice(key, 1)
+    setAnswers(answersClone)
+  }
 
   return (
     <>
@@ -103,13 +104,25 @@ export default function Host() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>
-        {answers.length > 0 ? (
-            answers.map((answer, index) => {
-                return(<div key={index}>{answer.data}</div>)
-                // return (index === 0 ? <AnswerUnderReview answer={answer.data} key={index} onAccept={handleAccept} onReject={handleReject}/> : <div  key={index}>{answer.data}</div>)
-            })
-        ) : <p>No answers yet...</p>}
-        <button className='btn btn-primary' onClick={handleNextQuestion}>Next Question</button>
+        <div className='h-[80vh] flex flex-col justify-between'>
+
+          {isGameStarted ?  <>
+                            <button className='btn btn-primary my-5' onClick={handleNextQuestion}>Next Question</button>
+                            <div className='flex flex-col-reverse items-center'>
+                              {answers.length > 0 ? (
+                                  answers.map((answer, index) => {
+                                      // return(<div key={index}>{answer.data}</div>)
+                                      return (index === 0 ? <AnswerUnderReview answer={answer.data} key={index} onAccept={handleAccept} onReject={handleReject}/> : <div className='opacity-50' key={index}>{answer.data}</div>)
+                                  })
+                              ) : <p>No answers yet...</p>}
+                            </div>
+                            </>
+                          : <>
+                              <button className='btn btn-primary my-5' onClick={handleNextQuestion}>Start Game</button>
+                            </>}
+
+          
+        </div>
       </Layout>
     </>
   )
