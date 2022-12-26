@@ -21,11 +21,11 @@ export default function LoginButton() {
   const { data: session } = useSession()
   if (session) {
     session ? localStorage.setItem(USER, JSON.stringify(session.user)) : null
-    return (
-      <>
-        Signed in as {session.user.name} <br />
-        <button className="btn" onClick={() => signOut()}>Sign out</button>
-      </>
+    return ( null
+      // <>
+      //   Signed in as {session.user.name} <br />
+      //   <button className="btn" onClick={() => signOut()}>Sign out</button>
+      // </>
     )
   }
 
@@ -33,19 +33,21 @@ export default function LoginButton() {
     console.log('SIGNING IN');
     setSignInAttempts(1)
     signIn('credentials', { redirect: false }, { anonUser: true, localId: localId })
-    return (
-      <>
-        Not signed in <br />
-        <button className="btn" onClick={() => signIn('credentials', { redirect: false }, { anonUser: true, localId: localId })}>Sign in</button>
-      </>
-    )
+    // return (
+    //   <>
+    //     Not signed in <br />
+    //     <button className="btn" onClick={() => signIn('credentials', { redirect: false }, { anonUser: true, localId: localId })}>Sign in</button>
+    //   </>
+    // )
+    return null
   }
 
-  return(
-    <>
-         <br />
-        <button className="btn" disabled>Sign In</button>
-      </>
-  )
+  // return(
+  //   <>
+  //        <br />
+  //       <button className="btn" disabled>Sign In</button>
+  //     </>
+  // )
+  return null
   
 }
