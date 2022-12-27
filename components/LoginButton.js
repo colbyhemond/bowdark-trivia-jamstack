@@ -9,9 +9,8 @@ export default function LoginButton() {
   const [localId, setLocalId] = useState(undefined)
   const [signInAttempts, setSignInAttempts] = useState(0)
 
-  let _id;
-
   useEffect(() => {
+    let _id
     if (window) {
       _id = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
     }

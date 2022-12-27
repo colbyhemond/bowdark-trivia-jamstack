@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { configureAbly } from '@ably-labs/react-hooks'
 import { useSession } from "next-auth/react"
 
+//Refactor constants into single doc to import
 const IDENTIFIER_KEY = '__bt_id'
 const USER = '__bt_user'
 
@@ -35,7 +36,15 @@ export default function Play() {
           _user ? setUsername(_user.name) : setUsername(session.user.name)
         }
 
-        const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+        let _localId = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
+
+        const ably = configureAbly({ 
+          authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest`,
+          authMethod: 'POST',
+          authParams: {
+            clientId: _localId
+          }
+        })
     
         ably.connection.on((stateChange) => {
           console.log(stateChange)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BowdarkLight from './BowdarkLight'
 
 
@@ -8,6 +8,18 @@ const SVGCanvas = ({channel}) => {
 
     console.log('Icons are active');
     console.log(channel);
+
+    useEffect(() => {
+        channel.subscribe('fire-icon', (data) => {
+            console.log(data);
+            handleAnimate()
+        })
+    })
+
+    
+       
+
+   
 
     //subscribe to an event to trigger this
     const handleAnimate = () => {
@@ -27,10 +39,7 @@ const SVGCanvas = ({channel}) => {
         // setLights(lightsClone)
     }
 
-    channel.subscribe('fire-icon', (data) => {
-        console.log(data);
-        handleAnimate()
-    })
+    
     
     return (<>
         {/* <div>

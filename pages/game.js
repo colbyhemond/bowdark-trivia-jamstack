@@ -6,6 +6,9 @@ import PlayersWidget from '../components/PlayersWidget'
 import SVGCanvas from '../components/SVGCanvas'
 import { configureAbly } from '@ably-labs/react-hooks'
 
+//Refactor constants into single doc to import
+const IDENTIFIER_KEY = '__bt_id'
+
 export default function Game() {
   const router = useRouter()
 
@@ -36,7 +39,15 @@ export default function Game() {
         game ? setGameId(game) : null
       }
 
-      const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+      let _localId = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
+
+      const ably = configureAbly({ 
+        authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest`,
+        authMethod: 'POST',
+        authParams: {
+          clientId: _localId
+        }
+      })
 
       ably.connection.on((stateChange) => {
         console.log(stateChange)
@@ -87,9 +98,7 @@ export default function Game() {
       }
 
     }
-  }, [answers, gameStarted, peopleCount, channel, gameId, router]) // Only run the client
-
-  //maybe subscribe to event to start the game
+  }, [answers, gameStarted, peopleCount, gameId, router]) // Only run the client
 
   const handleChangeGameId = (event) => {
     _gameId = event.target.value
@@ -113,17 +122,6 @@ export default function Game() {
 
   // subscribe to users in game - display list of users (maybe points)
 
-  if (correctAnswer) {
-    return (<>
-      <Layout>
-      {channel ? <SVGCanvas channel={channel}/> : null}
-            <h1>{question}</h1>
-            <h2 className='text-primary'>Correct Answer: {correctAnswer}</h2>
-       
-      </Layout>
-    </>)
-  }
-
   if (!gameId) {
     return (<>
       <Layout>
@@ -135,7 +133,17 @@ export default function Game() {
       </Layout>
     </>)
   }
-  
+
+  if (correctAnswer) {
+    return (<>
+      <Layout>
+      {channel ? <SVGCanvas channel={channel}/> : null}
+            <h1>{question}</h1>
+            <h2 className='text-primary'>Correct Answer: {correctAnswer}</h2>
+       
+      </Layout>
+    </>)
+  }
 
   return (
     <>
@@ -144,7 +152,7 @@ export default function Game() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>        
-        {channel ? <SVGCanvas channel={channel}/> : null}
+        <SVGCanvas channel={channel}/>
         {gameStarted ? <>
             <h1>{question}</h1>
             <p>Answers Submitted: {answers.length}</p>

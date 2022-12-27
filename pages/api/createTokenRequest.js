@@ -51,6 +51,8 @@ export default async function handler(req, res) {
   const token = await getToken({ req, secret })
   console.log("JSON Web Token", token)
 
+  console.log(req.body);
+
   const clientId = req.body["clientId"] || process.env.DEFAULT_CLIENT_ID || "NO_CLIENT_ID";
   const client = new Ably.Rest(process.env.ABLY_API_KEY);
   const tokenRequestData = await client.auth.createTokenRequest({ clientId: clientId });

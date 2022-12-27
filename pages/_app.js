@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import { useRouter } from 'next/router';
 import { SessionProvider, getSession } from "next-auth/react"
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useLocalStorage } from '../lib/hooks/use-local-storage';
 import ShortUniqueId from 'short-unique-id'
 
@@ -15,8 +15,7 @@ export default function MyApp({
 }) {
 
   const [localId, setLocalId] = useState(undefined)
-    
-
+  
     useEffect(() => {
       if (window) {
         let _id = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
@@ -27,7 +26,7 @@ export default function MyApp({
         } else {
           localStorage.setItem(ANONYMOUS, JSON.stringify(false));
         }
-        setLocalId(_id)
+        // setLocalId(_id)
 
       }
     }, [])

@@ -16,6 +16,10 @@ export default function Host() {
   const [channel, setChannel] = useState(null)
   const [isGameStarted, setIsGameStarted] = useState(false)
 
+  //Refactor constants into single doc to import
+  const IDENTIFIER_KEY = '__bt_id'
+
+
   useEffect(() => {
     if (router.isReady) {
 
@@ -24,7 +28,15 @@ export default function Host() {
         game ? setGameId(game) : router.push('/game')
       }
       
-      const ably = configureAbly({ authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest` })
+      let _localId = JSON.parse(localStorage.getItem(IDENTIFIER_KEY))
+
+      const ably = configureAbly({ 
+        authUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/createTokenRequest`,
+        authMethod: 'POST',
+        authParams: {
+          clientId: _localId
+        }
+      })
 
       ably.connection.on((stateChange) => {
         console.log(stateChange)
@@ -58,7 +70,7 @@ export default function Host() {
       console.log(router.isReady);
       // router.replace('/host')
     }
-  }, [answers, router, gameId]) // Only run the client
+  }, [answers, router, gameId, channel, peopleCount]) // Only run the client
 
   const getQuestions = async (gameId) => {
     fetch('/api/game?' + new URLSearchParams({
