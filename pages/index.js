@@ -31,7 +31,7 @@ export default function Home() {
 
     router.push({
       pathname: '/play',
-      query: { game: joinCode.toUpperCase }
+      query: { game: joinCode.toUpperCase() }
     })
   }
 

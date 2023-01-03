@@ -84,6 +84,12 @@ export default function Play() {
         }
     }
 
+    const handleSubmitAnswer = () => {
+      sendAnswer(input)
+      document.querySelector('#answer-input').value = null
+      setInput(undefined)
+    }
+
     const handleSubmitName = async () => {
       setIsUsername(true)
       session.user.name = username
@@ -143,7 +149,7 @@ export default function Play() {
             onChange={onChangeHandler}
             onKeyUp={handleKeyUpSubmit}
         />
-        <button className='btn btn-primary w-full'>Submit</button>
+        <button className='btn btn-primary w-full' onClick={handleSubmitAnswer}>Submit</button>
         <div className='flex mt-5'>
           <div className='border rounded-[50%] border-neutral border-[7px] w-[100px] h-[100px] flex justify-center items-center bg-primary' onClick={handleLightBulbClick}>
             <Image width={50} height={50} src="./bowdark_logo.svg" alt="Bowdark Logo" style={imgStyle} />
