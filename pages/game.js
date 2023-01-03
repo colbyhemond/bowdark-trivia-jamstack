@@ -112,7 +112,7 @@ export default function Game() {
     router.push({
         pathname: '/host',
         query: { 
-          game: _gameId,
+          game: _gameId.toUpperCase(),
           host: true
         }
       }, 
@@ -126,7 +126,7 @@ export default function Game() {
     return (<>
       <Layout>
         {/* <div className='flex'> */}
-          <input type="text" className='input input-bordered' placeholder='Game ID' onChange={handleChangeGameId}/>
+          <input type="text" className='input input-bordered uppercase' placeholder='Game ID' onChange={handleChangeGameId}/>
           <button className='btn btn-primary w-full' onClick={handleSubmitGameId}>Start Game</button>
           <button className='btn w-full' onClick={()=>{router.push('/')}}>Main Menu</button>
         {/* </div> */}
@@ -158,18 +158,18 @@ export default function Game() {
             <p>Answers Submitted: {answers.length}</p>
           </>
           : <>
-            <h1>Waiting for everyone to join</h1>
+            <h1 className='text-center'>Waiting for everyone to join</h1>
             <PlayersWidget playersCount={peopleCount}/>
-            <h2>To join go to <code className='bg-gray-700'>{window.location.origin}/join</code></h2>
+            <h2 className='text-center'>To join go to:<br/> <code className='bg-gray-700'>{window.location.origin}/join</code></h2>
             <h2>Use code <code className='bg-gray-700 tracking-[.5em]'>{gameId}</code></h2>
             { /*Need to move this to a side pane on the right */}
             <h2>People in the house:</h2>
             {people.length > 0 ? (
               people.map((person) => {
                 if (person.data) {
-                  return(<li>{person.data.name}</li>)
+                  return(<div>{person.data.name}</div>)
                 } else {
-                  return(<li>Anonymous Bowdork 🤓</li>)
+                  return(<div>Anonymous Bowdork 🤓</div>)
                 }
                 
               }) 

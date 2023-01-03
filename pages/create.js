@@ -85,11 +85,11 @@ export default function Create() {
 
   return (
     <>
-      {/* <div className='w-screen h-screen flex justify-center items-center'>
-
-        <div className='prose flex flex-col gap-1 items-center justify-center'> */}
-        <Layout>
-            <h1>Add your trivia questions</h1>
+        <Layout title='Add your trivia questions'>
+            <div className='flex gap-1'>
+              <button className='btn' onClick={handleStartGame}>Start Game</button>
+              <button className='btn' onClick={handleLoadSavedGame}>Load Game</button>
+            </div>
             <div className='flex items-center'>
               <p>Your Game ID is:</p>
               <input className='input input-bordered' id="gameid" type="text" placeholder='Game ID' value={gameId}/>
@@ -97,16 +97,11 @@ export default function Create() {
             <input className='input input-bordered w-full' id="question" type='text' placeholder='What is...?' onChange={handleQuestionInputChange}/>
             <div className='flex gap-1'>
               <button className='btn btn-primary' onClick={handleAddQuestion}>Add Question</button>
-              <button className='btn' onClick={handleStartGame}>Start Game</button>
-              <button className='btn' onClick={handleLoadSavedGame}>Load Game</button>
             </div>
-            <h2>Question Bank</h2>
             <div className='flex flex-col border rounded border-zinc-700 w-full h-[20vh] p-5 overflow-scroll'>
-              {questions.length === 0 ? <p>No questions added yet</p> : questions.map((question, index) => {return(<li className='' key={`q-${index}`}>{question}</li>)})}
+              {questions.length === 0 ? <p>No questions added yet</p> : questions.map((question, index) => {return(<div className='' key={`q-${index}`}>{question}</div>)})}
             </div>
             </Layout>
-        {/* </div>
-      </div> */}
     </>
   )
 }

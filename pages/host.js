@@ -130,11 +130,11 @@ export default function Host() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>
-        <div className='h-[80vh] flex flex-col justify-between'>
+        <div className='h-[80vh] flex flex-col items-center'>
           <a target="_blank" rel="noopener noreferrer" href={`${process.env.NEXT_PUBLIC_HOST_URL}/game?game=${gameId}`}>Open Game View</a>
           {isGameStarted ?  <>
                             <button className='btn btn-primary my-5' onClick={handleNextQuestion}>Next Question</button>
-                            <div className='flex flex-col-reverse items-center'>
+                            <div className='flex flex-col-reverse items-center justify-start h-[65%]'>
                               {answers.length > 0 ? (
                                   answers.map((answer, index) => {
                                       // return(<div key={index}>{answer.data}</div>)

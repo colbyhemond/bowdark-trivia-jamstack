@@ -68,7 +68,6 @@ export default function Play() {
     
   
     const sendAnswer = (answerText) => {
-      //If this proves to be too much for connections, then maybe switch to server to use REST - use /api/pub-sub/publish - see next example
       channel.publish({ name: "trivia-answer", data: answerText });
     }
 
@@ -77,7 +76,8 @@ export default function Play() {
     }
 
     const handleKeyUpSubmit = (e) => {
-        if (e.code === 'Enter' && input) {
+        console.log(e.code);
+        if (( e.code === 'Enter' || e.code === 'NumpadEnter') && input) {
             sendAnswer(input)
             document.querySelector('#answer-input').value = null
             setInput(undefined)
@@ -115,6 +115,10 @@ export default function Play() {
       channel.publish({name: 'fire-icon', data: 'lightbulb'})
     }
 
+  const imgStyle = {
+    filter: 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.3)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06))'
+  }
+
   return (
     <>
       <Script
@@ -122,12 +126,15 @@ export default function Play() {
         src="https://cdn.ably.com/lib/ably.min-1.js"
       ></Script>
       <Layout>
-        { isUsername  ? <h1>Hey, {username}! <span className='text-sm cursor-pointer' onClick={() => {setIsUsername(false)}}>✏️</span></h1> 
+        { isUsername  ? <h1 className='flex items-center'>Hey, {username}! <span className='text-sm cursor-pointer' onClick={() => {setIsUsername(false)}}>✏️</span></h1> 
                       : <div className='flex items-center'>
                           <p>What should we call you?</p>
                           <input type='text' className='input input-bordered' placeholder='Your name here' onChange={handleChangeName}/>
                           <button className='btn' onClick={handleSubmitName}>Submit Name</button>
                         </div>}
+        <label className="label">
+          <span className="label-text-alt">Press <code>Enter</code> to submit question</span>
+        </label>
         <input
             id='answer-input'
             className='input input-bordered w-full'
@@ -136,12 +143,10 @@ export default function Play() {
             onChange={onChangeHandler}
             onKeyUp={handleKeyUpSubmit}
         />
-        <label className="label">
-          <span className="label-text-alt">Press <code>Enter</code> to submit question</span>
-        </label>
+        <button className='btn btn-primary w-full'>Submit</button>
         <div className='flex mt-5'>
           <div className='border rounded-[50%] border-neutral border-[7px] w-[100px] h-[100px] flex justify-center items-center bg-primary' onClick={handleLightBulbClick}>
-            <Image width={50} height={50} src="./bowdark_logo.svg" alt="Bowdark Logo" />
+            <Image width={50} height={50} src="./bowdark_logo.svg" alt="Bowdark Logo" style={imgStyle} />
           </div>
         </div>
       </Layout>

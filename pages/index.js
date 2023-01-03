@@ -31,7 +31,7 @@ export default function Home() {
 
     router.push({
       pathname: '/play',
-      query: { game: joinCode }
+      query: { game: joinCode.toUpperCase }
     })
   }
 
@@ -43,7 +43,7 @@ export default function Home() {
 
   return (
     <>
-      <Layout>   
+      <Layout title='Bowdark Trivia'>   
         <LoginButton/>
         <h2>Hosting a game?</h2>
         <div className='flex gap-5'>
@@ -52,7 +52,7 @@ export default function Home() {
         </div>
         <h2>Here to play?</h2>
         <div className='flex gap-1'>
-          <input className='input input-bordered' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
+          <input className='input input-bordered uppercase' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
           <button className='btn btn-primary' onClick={handleJoinGame}>Join Game</button>
         </div>
       </Layout>

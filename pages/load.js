@@ -14,7 +14,7 @@ export default function Load() {
 
     router.push({
       pathname: '/create',
-      query: { game: gameCode }
+      query: { game: gameCode.toUpperCase() }
     })
   }
 
@@ -24,10 +24,9 @@ export default function Load() {
 
   return (
     <>
-      <Layout>
-        <h2>Enter code to load saved questions</h2>
+      <Layout title='Enter code to load saved questions'>
         <div className='flex gap-1'>
-          <input className='input input-bordered' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
+          <input className='input input-bordered uppercase' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
           <button className='btn' onClick={handleLoadGame}>Load Game</button>
         </div>
       </Layout>

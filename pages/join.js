@@ -16,7 +16,7 @@ export default function Join() {
 
     router.push({
       pathname: '/play',
-      query: { game: joinCode }
+      query: { game: joinCode.toUpperCase() }
     })
   }
 
@@ -29,7 +29,7 @@ export default function Join() {
       <Layout>
         <h2>Enter code to join game room</h2>
         <div className='flex gap-1'>
-          <input className='input input-bordered' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
+          <input className='input input-bordered uppercase' type='text' placeholder='Enter code here' onChange={handleCodeInput}></input>
           <button className='btn' onClick={handleJoinGame}>Join Game</button>
         </div>
       </Layout>
