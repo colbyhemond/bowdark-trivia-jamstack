@@ -9,7 +9,7 @@ const Navbar = ({children}) => {
     }
     
     return (<>
-        <div className="navbar bg-base-300">
+        <div className="navbar bg-base-300 max-w-screen">
             <a className="btn btn-ghost normal-case text-xl font-typoslab" onClick={handleLogoClick}>Bowdark Trivia</a>
         </div>
     </>)
